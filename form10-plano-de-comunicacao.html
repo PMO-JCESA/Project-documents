@@ -274,7 +274,7 @@ table.cm tbody tr:nth-child(even) td{background:#F1F5F9}
     <div id="matList"></div>
     <datalist id="freqs"><option value="Única (Início)"><option value="Diária"><option value="Semanal"><option value="Quinzenal"><option value="Mensal"><option value="Trimestral"><option value="Por Evento"><option value="Por Demanda"><option value="Fim de Fase"></datalist>
     <datalist id="resps"><option value="Gerente de Projeto"><option value="PMO"><option value="PMO / GP"><option value="Líder Técnico"><option value="Líder de Negócios"><option value="Sponsor"></datalist>
-    <datalist id="canais"><option value="Reunião / PPT"><option value="E-mail / PDF"><option value="Reunião / Ata"><option value="E-mail / Word"><option value="Portal GP TI"><option value="Reunião Específica"><option value="E-mail Corporativo"><option value="Workshop / Doc"><option value="SharePoint"></datalist>
+    <datalist id="canais"><option value="Reunião / PPT"><option value="E-mail / PDF"><option value="Reunião / Ata"><option value="E-mail / Word"><option value="Portal GP JCESA"><option value="Reunião Específica"><option value="E-mail Corporativo"><option value="Workshop / Doc"><option value="SharePoint"></datalist>
     <button class="btn navy sm" type="button" data-act="addMat">+ Adicionar linha</button>
     <div class="stepnav" data-nav="s-mat"></div>
   </section>
@@ -308,12 +308,12 @@ const makeState=()=>({
   can:[{nome:'Teams',quando:'Comunicação rápida e informal (Chat).\nReuniões diárias e alinhamentos pontuais.\nColaboração em tempo real em arquivos.'},
        {nome:'Outlook',quando:'Formalização de decisões e aprovações.\nComunicação com stakeholders externos.\nEnvio de Status Reports executivos.'},
        {nome:'SharePoint',quando:'Repositório oficial de documentos (GED).\nArmazenamento de entregáveis finais.\nControle de versão de artefatos.'},
-       {nome:'Jira / Planner',quando:'Gestão de tarefas e backlog.\nAcompanhamento de bugs e issues.\nVisualização do fluxo de trabalho (Kanban).'}],
+       {nome:'Portal GP JCESA',quando:'Cronograma detalhado do projeto.\nGestão de tarefas e acompanhamento das entregas.\nVisibilidade do andamento para os stakeholders.'}],
   mat:[['Project Charter / Kick-off','Sponsor, Stakeholders, Equipe','Única (Início)','Reunião / PPT','Gerente de Projeto'],
        ['Status Report Executivo','Sponsor, Diretoria, SteerCo','Quinzenal','E-mail / PDF','PMO'],
        ['Status Report Operacional','Equipe do Projeto, Líderes','Semanal','Reunião / Ata','Gerente de Projeto'],
        ['Ata de Reunião (Memória)','Participantes da Reunião','Por Evento','E-mail / Word','Gerente de Projeto'],
-       ['Cronograma Atualizado','Equipe Técnica, Gestores','Semanal','Portal GP TI','PMO / GP'],
+       ['Cronograma Atualizado','Equipe Técnica, Gestores','Semanal','Portal GP JCESA','PMO / GP'],
        ['Relatório de Riscos e Issues','Comitê de Mudança, Sponsor','Mensal','Reunião Específica','Gerente de Projeto'],
        ['Comunicado de Mudança (GMUD)','Usuários Afetados, Suporte','Por Demanda','E-mail Corporativo','Líder Técnico'],
        ['Lições Aprendidas','PMO, Equipe, Sponsor','Fim de Fase','Workshop / Doc','Gerente de Projeto']].map(([art,pub,freq,canal,resp])=>({art,pub,freq,canal,resp})),
