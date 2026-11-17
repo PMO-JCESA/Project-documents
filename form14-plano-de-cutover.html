@@ -452,7 +452,7 @@ function secHTML(s,idx){
   if(s.kind==='kpis')return h+`<div class="sumstrip kp" data-kp="${s.items.join(',')}" style="grid-template-columns:repeat(${s.items.length},minmax(0,1fr));margin-top:8px"></div>`;
   if(s.kind==='decision')return h+`<div id="sg-${s.k}"></div><div class="big2" id="d-${s.k}"></div>`;
   if(s.kind==='text')return h+`<label class="f" style="margin-top:8px"><span>${esc(s.l)}${s.req?'':' <small class="hint">(opcional)</small>'}</span><textarea data-path="t.${s.k}" style="min-height:70px" placeholder="${esc(s.ph||'')}"></textarea></label>`;
-  if(s.kind==='term')return `<div class="tip" style="margin-top:6px"><b>${esc(s.title||'Termo')}.</b> ${esc(s.text)}</div>`;
+  if(s.kind==='term')return `<div class="tip${termWarn(s)?' warn':''}" style="margin-top:6px" data-term="${esc(s.title||'Termo')}"><b>${esc(s.title||'Termo')}.</b> ${esc(termText(s))}</div>`;
   if(s.kind==='signers')return h+`<div class="grow hd" style="--cols:minmax(0,1fr) minmax(0,1fr)"><span>Papel</span><span>Nome</span></div>${s.roles.map((r,i)=>`<div class="grow" style="--cols:minmax(0,1fr) minmax(0,1fr)"><div class="rolebox"><b>${esc(r.p)}</b><small>${esc(r.s||'')}</small></div>${inp('sg.'+i,'Nome completo')}</div>`).join('')}`;
   return '';
 }
@@ -486,10 +486,14 @@ function sugOf(s){
   const bad=all.includes('N'),pend=all.some(v=>!v);
   return {v:bad?s.sug.bad:s.sug.ok,bad,pend};
 }
+function termText(s){if(!s.byDec)return s.text;const v=S.d[s.byDec.k];return (v&&s.byDec.t[v])||s.text;}
+function termWarn(s){return !!(s.byDec&&S.d[s.byDec.k]&&S.d[s.byDec.k]!==s.byDec.ok);}
+function renderTerms(){SECS.filter(x=>x.kind==='term'&&x.byDec).forEach(t=>{const e=document.querySelector(`[data-term="${(t.title||'Termo').replace(/"/g,'')}"]`);if(e){e.innerHTML=`<b>${esc(t.title||'Termo')}.</b> ${esc(termText(t))}`;e.classList.toggle('warn',termWarn(t));}});}
 function renderDec(s){
   const sg=sugOf(s);
   $('#sg-'+s.k).innerHTML=sg?`<div class="tip${sg.bad?' warn':''}"><b>Sugestão: ${esc(sg.v)}.</b> ${sg.bad?'Há itens não atendidos.':sg.pend?'Ainda há itens sem resposta.':'Tudo foi atendido.'} A decisão final é sua.</div>`:'';
   $('#d-'+s.k).innerHTML=s.options.map(o=>`<button type="button" class="${S.d[s.k]===o.v?'on':''}" style="--dc:${o.c}" data-dec="${s.k}" data-v="${esc(o.v)}">${esc(o.v)}</button>`).join('');
+  renderTerms();
 }
 function renderKpis(){$$('[data-kp]').forEach(e=>{e.innerHTML=e.dataset.kp.split(',').map(id=>{const k=KPI[id]();return `<div class="kpi" style="--kc:${k.c}"><small>${k.l}</small><b>${k.v}</b><em>${k.sub||''}</em></div>`;}).join('');});}
 function renderAll(){renderKpis();
@@ -656,7 +660,7 @@ function printSec(s,n){
   if(s.kind==='decision'){const v=S.d[s.k],o=s.options.find(x=>x.v===v);return `<div class="psec keep">${T}<div class="verd" style="--vc:${o?o.c:'#94A3B8'}"><small>${esc(s.title)}</small><b>${esc((v||'—').toUpperCase())}</b></div></div>`;}
   if(s.kind==='kpis')return `<div class="psec keep">${T}<div class="g4" style="grid-template-columns:repeat(${s.items.length},1fr)">${s.items.map(id=>{const k=KPI[id]();return `<div class="pk" style="--kc:${k.c}"><small>${k.l}</small><b>${k.v}</b><em>${k.sub||''}</em></div>`;}).join('')}</div></div>`;
   if(s.kind==='text'){const v=S.t[s.k];if(!v.trim())return '';return `<div class="psec keep">${T}<div class="px" style="--tc:#F59E0B"><h4>${esc(s.l)}</h4><p>${txt(v)}</p></div></div>`;}
-  if(s.kind==='term')return `<div class="psec keep">${T}<div class="px" style="--tc:#181F37"><p class="term">${nl2br(s.text)}</p></div></div>`;
+  if(s.kind==='term')return `<div class="psec keep">${T}<div class="px" style="--tc:${termWarn(s)?'#F59E0B':'#181F37'}"><p class="term">${nl2br(termText(s))}</p></div></div>`;
   if(s.kind==='signers')return `<div class="psec keep">${T}<div class="apr" style="grid-template-columns:repeat(${Math.min(s.roles.length,3)},1fr)">${s.roles.map((r,i)=>`<div class="apb"><b>${esc(S.sg[i])||'&nbsp;'}</b><span class="ck">${esc(r.p)}${r.s?' — '+esc(r.s):''}</span><span class="ck">Data: ___/___/______</span><div class="ln">Assinatura</div></div>`).join('')}</div></div>`;
   return '';
 }
