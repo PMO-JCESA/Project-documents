@@ -476,7 +476,7 @@ function ans(){
   const o=[];
   SECS.forEach(x=>{
     if(x.kind==='checks')S.c[x.k].forEach(v=>o.push(v));
-    if(x.kind==='list'&&x.okCol)S.l[x.k].filter(r=>!rowEmpty(x,r)).forEach(r=>o.push(r[x.okCol.k]===x.okCol.ok?'S':(r[x.okCol.k]?'N':'')));
+    if(x.kind==='list'&&x.okCol)S.l[x.k].filter(r=>!rowEmpty(x,r)).forEach(r=>o.push([].concat(x.okCol.ok).includes(r[x.okCol.k])?'S':(r[x.okCol.k]?'N':'')));
   });
   return o;
 }
@@ -596,12 +596,12 @@ function validate(){
     if(s.kind==='list'){
       const rows=S.l[s.k].map((r,i)=>[r,i]).filter(([r])=>!rowEmpty(s,r));
       if(s.req)chk(rows.length,`Cadastre ao menos um item em “${s.title}”.`,P(`l.${s.k}.0.${s.cols[0].k}`),tab);
-      rows.forEach(([r,i])=>s.cols.forEach(c=>{if(c.req!==false)chk(String(r[c.k]).trim(),`${s.short||'Item'} ${i+1}: informe ${c.l.toLowerCase()}.`,P(`l.${s.k}.${i}.${c.k}`),tab);}));}
+      rows.forEach(([r,i])=>s.cols.forEach(c=>{if(c.reqIf?[].concat(c.reqIf.v).includes(r[c.reqIf.k]):c.req!==false)chk(String(r[c.k]).trim(),`${s.short||'Item'} ${i+1}: informe ${c.l.toLowerCase()}.`,P(`l.${s.k}.${i}.${c.k}`),tab);}));}
     if(s.kind==='checks')S.c[s.k].forEach((v,i)=>chk(v,`Responda: ${s.items[i]}`,`[data-ck="${s.k}"][data-i="${i}"]`,tab));
     if(s.kind==='decision'){chk(S.d[s.k],`Escolha: ${s.title}.`,`[data-dec="${s.k}"]`,tab);
-      if(s.blockOk&&S.d[s.k]===s.sug.ok&&ans().includes('N'))chk(false,`A decisão “${s.sug.ok}” não é possível com critérios marcados como “Não”. Resolva-os ou altere a decisão.`,`[data-dec="${s.k}"]`,tab);}
+      if(s.blockOk&&S.d[s.k]===s.sug.ok&&ans().includes('N'))chk(false,`A decisão “${s.sug.ok}” não é possível com itens não atendidos (marcados como “Não” ou pendentes). Resolva-os ou altere a decisão.`,`[data-dec="${s.k}"]`,tab);}
     if(s.kind==='text'){const hasN=ans().includes('N');
-      if(s.req===true||(s.req==='N'&&hasN))chk(String(S.t[s.k]).trim(),s.req==='N'?'Há critérios marcados como “Não”: descreva as pendências nas observações.':`Preencha: ${s.l}.`,P('t.'+s.k),tab);}
+      if(s.req===true||(s.req==='N'&&hasN))chk(String(S.t[s.k]).trim(),s.req==='N'?'Há itens não atendidos (“Não” ou pendentes): descreva-os nas observações.':`Preencha: ${s.l}.`,P('t.'+s.k),tab);}
     if(s.kind==='signers')s.roles.forEach((r,i)=>chk(String(S.sg[i]).trim(),`Informe o nome: ${r.p}.`,P('sg.'+i),tab));
   }));
   return {E,total};
